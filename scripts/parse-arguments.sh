@@ -28,6 +28,7 @@ SUPPORTED_LIBRARIES_FREE=(
   "mbedtls"
   "libbluray"
   "libxml2"
+  "libopenssl"
 )
 
 # All GPL libraries that are supported
@@ -121,6 +122,9 @@ for argument in "$@"; do
     ;;
   --enable-mbedtls | -mbedtls)
     EXTERNAL_LIBRARIES+=("mbedtls")
+    ;;
+  --enable-openssl | -openssl)
+    EXTERNAL_LIBRARIES+=("openssl")
     ;;
   --enable-libbluray | -bluray)
     EXTERNAL_LIBRARIES+=("libbluray")

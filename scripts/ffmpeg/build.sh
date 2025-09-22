@@ -48,7 +48,7 @@ EXTRA_LDFLAGS="-Wl,-z,max-page-size=16384 $DEP_LD_FLAGS"
   --enable-shared \
   --disable-static \
   --disable-vulkan \
-  --enable-debug --enable-muxer=whip  --enable-muxer=rtsp --enable-jni --enable-mediacodec   --enable-indev=android_camera \
+  --enable-version3 --enable-muxer=whip  --enable-muxer=rtsp --enable-jni --enable-mediacodec   --enable-indev=android_camera \
   --pkg-config=${PKG_CONFIG_EXECUTABLE} \
   ${EXTRA_BUILD_CONFIGURATION_FLAGS} \
   $ADDITIONAL_COMPONENTS || exit 1
