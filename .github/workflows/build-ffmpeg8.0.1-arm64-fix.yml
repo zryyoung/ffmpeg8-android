@@ -1,0 +1,73 @@
+name: Build FFmpeg 8.0.1 for Android (arm64-v8a only)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-arm64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK & NDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK r26
+        run: |
+          echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125" > /dev/null
+          echo "ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/26.1.10909125" >> $GITHUB_ENV
+
+      - name: Install required platform & build-tools
+        run: |
+          echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install \
+            "platforms;android-34" \
+            "build-tools;34.0.0" > /dev/null
+
+      - name: Make script executable
+        run: chmod +x ffmpeg-android-maker.sh
+
+      - name: Export FFmpeg version
+        run: |
+          export FFMPEG_SOURCE_TYPE=GIT_TAG
+          export FFMPEG_SOURCE_VALUE=n8.0.1
+          echo "FFMPEG_SOURCE_TYPE=GIT_TAG" >> $GITHUB_ENV
+          echo "FFMPEG_SOURCE_VALUE=n8.0.1" >> $GITHUB_ENV
+
+      - name: Build FFmpeg 8.0.1 for arm64-v8a
+        run: |
+          export ANDROID_NDK_HOME=${{ env.ANDROID_NDK_HOME }}
+          export ANDROID_SDK_HOME=$ANDROID_HOME
+          ./ffmpeg-android-maker.sh --abis=arm64-v8a
+
+      - name: Check text relocations
+        run: |
+          if [ -f stats/text-relocations.txt ] && grep -q TEXTREL stats/text-relocations.txt; then
+            echo "Error: Text relocations detected!"
+            cat stats/text-relocations.txt
+            exit 1
+          else
+            echo "No text relocations - build successful!"
+          fi
+
+      - name: Upload full output directory
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-arm64-v8a-n8.0.1
+          path: output/
+          retention-days: 30
+
+      - name: Upload build stats
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-stats-n8.0.1
+          path: stats/
