@@ -1,8 +1,6 @@
-name: Build FFmpeg for Android (arm64-v8a only)
+name: Build FFmpeg 8.0.1 for Android
 
 on:
-  push:
-    branches: [ main ]  # 根据你的默认分支修改
   workflow_dispatch:    # 支持手动触发
 
 jobs:
@@ -40,9 +38,9 @@ jobs:
         run: |
           export ANDROID_NDK_HOME=${{ env.ANDROID_NDK_HOME }}
           export ANDROID_SDK_HOME=$ANDROID_HOME
-          ./ffmpeg-android-maker.sh --abis=arm64-v8a
-          # 如果你还想指定最低 API 级别，可以加参数，例如：
-          # ./ffmpeg-android-maker.sh --abis=arm64-v8a --api=21
+          export FFMPEG_SOURCE_TYPE=TAR
+          export FFMPEG_SOURCE_VALUE=8.0.1
+          ./ffmpeg-android-maker.sh
 
       - name: Check text relocations (fail if present)
         run: |
@@ -57,11 +55,9 @@ jobs:
       - name: Upload arm64-v8a libraries as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ffmpeg-arm64-v8a
+          name: ffmpeg-8.0.1-android
           path: |
-            output/lib/arm64-v8a/
-            output/include/arm64-v8a/
-          retention-days: 30
+            output/
 
       - name: Upload build stats
         uses: actions/upload-artifact@v4

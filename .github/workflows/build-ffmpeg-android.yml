@@ -1,9 +1,7 @@
-name: Build FFmpeg 8.0.1 for Android (arm64-v8a only)
+name: Build FFmpeg for Android 
 
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch:    # 支持手动触发
 
 jobs:
   build-arm64:
@@ -36,20 +34,13 @@ jobs:
       - name: Make script executable
         run: chmod +x ffmpeg-android-maker.sh
 
-      - name: Export FFmpeg version
-        run: |
-          export FFMPEG_SOURCE_TYPE=GIT_TAG
-          export FFMPEG_SOURCE_VALUE=n8.0.1
-          echo "FFMPEG_SOURCE_TYPE=GIT_TAG" >> $GITHUB_ENV
-          echo "FFMPEG_SOURCE_VALUE=n8.0.1" >> $GITHUB_ENV
-
-      - name: Build FFmpeg 8.0.1 for arm64-v8a
+      - name: Build FFmpeg only for arm64-v8a
         run: |
           export ANDROID_NDK_HOME=${{ env.ANDROID_NDK_HOME }}
           export ANDROID_SDK_HOME=$ANDROID_HOME
-          ./ffmpeg-android-maker.sh --abis=arm64-v8a
+          ./ffmpeg-android-maker.sh
 
-      - name: Check text relocations
+      - name: Check text relocations (fail if present)
         run: |
           if [ -f stats/text-relocations.txt ] && grep -q TEXTREL stats/text-relocations.txt; then
             echo "Error: Text relocations detected!"
@@ -59,15 +50,15 @@ jobs:
             echo "No text relocations - build successful!"
           fi
 
-      - name: Upload full output directory
+      - name: Upload arm64-v8a libraries as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ffmpeg-arm64-v8a-n8.0.1
-          path: output/
-          retention-days: 30
+          name: ffmpeg-7.0.1-android
+          path: |
+            output/
 
       - name: Upload build stats
         uses: actions/upload-artifact@v4
         with:
-          name: build-stats-n8.0.1
+          name: build-stats-arm64
           path: stats/
