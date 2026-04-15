@@ -67,3 +67,9 @@ jobs:
         with:
           name: build-stats-arm64
           path: stats/
+          
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-arm64
+          path: build/
