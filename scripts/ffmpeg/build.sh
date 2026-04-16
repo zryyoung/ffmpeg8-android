@@ -28,7 +28,8 @@ DEP_LD_FLAGS="-L${BUILD_DIR_EXTERNAL}/${ANDROID_ABI}/lib $FFMPEG_EXTRA_LD_FLAGS 
 # Android 15 with 16 kb page size support
 # https://developer.android.com/guide/practices/page-sizes#compile-r27
 EXTRA_LDFLAGS="-Wl,-z,max-page-size=16384 $DEP_LD_FLAGS"
-
+  
+#--extra-ldflags="$EXTRA_LDFLAGS" \
 ./configure \
   --prefix=${BUILD_DIR_FFMPEG}/${ANDROID_ABI} \
   --enable-cross-compile \
@@ -44,11 +45,16 @@ EXTRA_LDFLAGS="-Wl,-z,max-page-size=16384 $DEP_LD_FLAGS"
   --ranlib=${FAM_RANLIB} \
   --strip=${FAM_STRIP} \
   --extra-cflags="-O3 -fPIC $DEP_CFLAGS" \
-  --extra-ldflags="$EXTRA_LDFLAGS" \
-  --enable-shared \
-  --disable-static \
+  --extra-ldflags="$DEP_LD_FLAGS" \
+  --disable-shared \
+  --enable-static \
   --disable-vulkan \
-  --enable-version3 --enable-muxer=whip  --enable-muxer=rtsp --enable-jni --enable-mediacodec   --enable-indev=android_camera \
+  --enable-version3 \
+  --enable-muxer=whip \
+  --enable-muxer=rtsp \
+  --enable-jni \
+  --enable-mediacodec \
+  --enable-indev=android_camera \
   --pkg-config=${PKG_CONFIG_EXECUTABLE} \
   ${EXTRA_BUILD_CONFIGURATION_FLAGS} \
   $ADDITIONAL_COMPONENTS || exit 1
