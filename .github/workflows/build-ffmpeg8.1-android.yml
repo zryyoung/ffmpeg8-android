@@ -44,8 +44,19 @@ jobs:
             --target-abis=arm64-v8a \
             --android-api-level=21 \
             --disable-x86asm \
-            --enable-all-free \
-            --enable-all-gpl
+            --enable-libmp3lame \
+            --enable-libopus \
+            --enable-libvpx \
+            --enable-libwebp \
+            --enable-libfreetype \
+            --enable-libfribidi \
+            --enable-mbedtls \
+            --enable-libbluray \
+            --enable-libxml2 \
+            --enable-openssl \
+            --enable-libx264 \
+            --enable-libx265
+
 
       - name: Check text relocations (fail if present)
         run: |
